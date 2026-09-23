@@ -25,11 +25,50 @@
 
 #include <iostream>
 #include <cmath>
+#include <vector>
 
 using namespace std;
 
 // ==================== 在此处编写 Enemy和Target 类 ====================
 
+class Enemy
+{
+private:
+    double x,y;
+    char id;
+public:
+    Enemy(double x=0,double y=0,char id=0):x(x),y(y),id(id){};
+    ~Enemy(){};
+    pair<double,double> getPos(){return make_pair(x,y);};
+    char getId(){return id;};
+    double getDis(double x0=0,double y0=0){return sqrt(pow(x-x0,2)+pow(y-y0,2));};
+    void print(){printf("(%c,%lf,%lf)\n",id,x,y);};
+};
+
+class Target
+{
+private:
+    vector<Enemy> tar;
+    const int Inf=1e6;
+public:
+    Target(){};
+    Target(vector<Enemy> vec){tar=vec;};
+    ~Target(){};
+    void newEnemy(Enemy item){tar.push_back(item);};
+    Enemy select(double x0=0,double y0=0)
+    {
+        if(tar.empty()) return Enemy();
+        int ans=-1;
+        double dis=Inf;
+        for(int i=0;i<tar.size();i++)
+        {
+            double d=tar[i].getDis();
+            if(d<dis) dis=d,ans=i;
+        }
+        if(ans!=-1) return tar[ans];
+        return Enemy();
+    }
+};
 
 
 // ====================================================================
@@ -45,9 +84,9 @@ int main() {
         cin >> id >> x >> y;
 
         //在此处调用你的Enemy的设置函数，传入id,x,y
-        
+        target.newEnemy(Enemy(x,y,id));
     }
-
+    target.select().print();
     // 调用查找并输出最佳目标
 
     return 0;
